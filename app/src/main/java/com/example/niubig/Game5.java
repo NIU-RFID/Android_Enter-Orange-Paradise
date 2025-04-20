@@ -27,4 +27,6 @@ public class Game5 extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
+    public void onClickStartGame(View view) {
+    }
 }
