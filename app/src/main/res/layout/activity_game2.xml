@@ -31,7 +31,7 @@
             android:backgroundTint="#F4BD63"
 
             android:onClick="onClickCheckMap"
-            android:text="開啟 Google 地圖"
+            android:text="開啟地圖"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textColor="#000000"
             android:textColorLink="@color/white"

@@ -32,13 +32,28 @@ public class GPSHelper {
     public static boolean checkAndRequestPermission(Activity activity) {
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            // 顯示權限請求對話框
-            ActivityCompat.requestPermissions(activity,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    LOCATION_PERMISSION_REQUEST_CODE);
+
+            // 如果曾經拒絕過但沒勾選「不再詢問」，可以再次顯示權限提示
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                // 可以在這裡顯示自訂 Dialog 解釋為什麼需要權限
+                ActivityCompat.requestPermissions(activity,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        LOCATION_PERMISSION_REQUEST_CODE);
+            } else {
+                // 使用者勾選了「不再詢問」
+                // 引導用戶到設定頁手動開啟權限
+                Toast.makeText(activity, "請至設定中開啟位置權限", Toast.LENGTH_LONG).show();
+
+                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", activity.getPackageName(), null);
+                intent.setData(uri);
+                activity.startActivity(intent);
+            }
+
             return false;
         }
-        // 權限已授予，返回 true
+
+        // 已經有權限了
         return true;
     }
     public static void initialize(Context context) {

@@ -119,7 +119,6 @@ public class ClickGameActivity extends AppCompatActivity {
                         now_scoce = 0;
                     }
                     score_textView.setText(String.valueOf(now_scoce));
-                    // TODO: 到下個場景
                     if (now_scoce >= target_sccre){
                         Toast.makeText(this, "恭喜已達成" + String.valueOf(target_sccre) + "分的目標，請前往下一關", Toast.LENGTH_SHORT).show();
                         editor.putBoolean("game1", true); // key 是 "done"，value 是 true

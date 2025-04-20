@@ -24,7 +24,7 @@ public class Game5 extends AppCompatActivity {
         });
     }
     public void back(View view) {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, Game.class);
         startActivity(intent);
     }
     public void onClickStartGame(View view) {

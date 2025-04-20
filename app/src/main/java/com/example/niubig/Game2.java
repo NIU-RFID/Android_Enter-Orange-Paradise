@@ -61,7 +61,6 @@ public class Game2 extends AppCompatActivity {
             }
         }
     }
-    // 暫時
     public void onClickStartGame(View view){
         if (!GPSHelper.hasPermission(this)){
             Toast.makeText(this, "請先開啟 GPS 授權", Toast.LENGTH_SHORT).show();
@@ -69,6 +68,8 @@ public class Game2 extends AppCompatActivity {
             startActivity(intent);
         }else{
             // 進入第二關遊戲中
+            Intent intent = new Intent(this, QuizGameActivity.class);
+            startActivity(intent);
         }
     }
 }
