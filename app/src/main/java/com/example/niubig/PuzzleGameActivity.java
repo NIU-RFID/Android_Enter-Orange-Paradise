@@ -1,4 +1,6 @@
 package com.example.niubig;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.DragEvent;
 import android.view.Gravity;
@@ -18,12 +20,14 @@ public class PuzzleGameActivity extends AppCompatActivity {
             R.drawable.puzzle_piece4, R.drawable.puzzle_piece5, R.drawable.puzzle_piece6,
             R.drawable.puzzle_piece7, R.drawable.puzzle_piece8, R.drawable.puzzle_piece9
     };
-
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_puzzle_game);
-
+        sharedPreferences = getSharedPreferences("isDone", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
         gridLayout = findViewById(R.id.gridLayout);
         gridLayout.setRowCount(3);
         gridLayout.setColumnCount(3);
@@ -113,7 +117,11 @@ public class PuzzleGameActivity extends AppCompatActivity {
                 return;  // 有一格不對，就直接回
             }
         }
-        Toast.makeText(this, "拼圖完成！", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "拼圖完成！", Toast.LENGTH_SHORT).show();
+        editor.putBoolean("game4", true);
+        editor.apply();
+        Intent intent = new Intent(this, Game.class);
+        startActivity(intent);
     }
 }
 

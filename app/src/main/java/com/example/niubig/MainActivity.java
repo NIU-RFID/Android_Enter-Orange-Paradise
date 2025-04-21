@@ -2,9 +2,11 @@ package com.example.niubig;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,7 +15,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
-
+    SharedPreferences sharedPreferences;
+    boolean game1_isDone, game2_isDone, game3_isDone, game4_isDone, game5_isDone;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,14 +27,25 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        sharedPreferences = getSharedPreferences("isDone", MODE_PRIVATE);
+        game1_isDone = sharedPreferences.getBoolean("game1", false);
+        game2_isDone = sharedPreferences.getBoolean("game2", false);
+        game3_isDone = sharedPreferences.getBoolean("game3", false);
+        game4_isDone = sharedPreferences.getBoolean("game4", false);
+        game5_isDone = sharedPreferences.getBoolean("game5", false);
     }
     public void startGame(View view) {
         Intent intent = new Intent(this, Game.class);
         startActivity(intent);
     }
     public void startReward(View view) {
-        Intent intent = new Intent(this, Reward.class);
-        startActivity(intent);
+        if (game1_isDone && game2_isDone && game3_isDone && game4_isDone && game5_isDone) {
+            Intent intent = new Intent(this, Reward.class);
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, "請先通關所有關卡", Toast.LENGTH_SHORT).show();
+        }
     }
     public void startInfo(View view) {
         Intent intent = new Intent(this, Info.class);

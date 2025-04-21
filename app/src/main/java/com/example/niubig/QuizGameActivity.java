@@ -45,9 +45,9 @@ public class QuizGameActivity extends AppCompatActivity {
     private void init_data() {
         QA_list = new ArrayList<>();
         QA_list.add(new QuizGameData("1. 石板屋適用甚麼石頭做的?",
-                new ArrayList<>(Arrays.asList("A.黑石板", "白石板", "綠石板", "紅石磚")), 0));
+                new ArrayList<>(Arrays.asList("黑石板", "白石板", "綠石板", "紅石磚")), 0));
         QA_list.add(new QuizGameData("2. 石板屋居住時不會出現甚麼問題?",
-                new ArrayList<>(Arrays.asList("A.衛生條件不佳", "房屋漏水", "光線不足", "通風差")), 3));
+                new ArrayList<>(Arrays.asList("衛生條件不佳", "房屋漏水", "光線不足", "通風差")), 3));
 
         information_LinearLayout = findViewById(R.id.information);
         information_LinearLayout.setVisibility(View.VISIBLE);
