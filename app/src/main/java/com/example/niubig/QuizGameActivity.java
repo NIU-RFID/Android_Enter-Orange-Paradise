@@ -18,7 +18,6 @@ import androidx.core.view.WindowInsetsCompat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
 public class QuizGameActivity extends AppCompatActivity {
     ArrayList<QuizGameData> QA_list;
     LinearLayout information_LinearLayout, quiz_LinearLayout;
@@ -95,7 +94,7 @@ public class QuizGameActivity extends AppCompatActivity {
         QuizGameData qa = QA_list.get(index);
         TextView problem = new TextView(this);
         problem.setText(qa.getQuestion());
-        // 設定文字風格與顏色
+        // 設定文字風格與顏色，若有 R 顯示成錯誤，請忽視這個錯誤
         problem.setTextAppearance(this, androidx.appcompat.R.style.TextAppearance_AppCompat_Large);
         problem.setTextColor(Color.parseColor("#000000"));
         quiz_LinearLayout.addView(problem);

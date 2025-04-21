@@ -1,87 +1,100 @@
 package com.example.niubig;
+
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.net.Uri;
-import android.os.Bundle;
-import android.provider.Settings;
-import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+
 public class GPSHelper {
 
-    public static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
-
-    private static LocationManager locationManager;
-    private static LocationListener locationListener;
-
-    public static double latitude = 0.0;
-    public static double longitude = 0.0;
-    // 純檢查權限，不做請求
-    public static boolean hasPermission(Context context) {
-        return ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED;
+    public interface GPSListener {
+        void onLocationUpdate(double latitude, double longitude);
     }
-    public static boolean checkAndRequestPermission(Activity activity) {
+
+    private static final int REQUEST_LOCATION_PERMISSION = 1001;
+
+    private final Activity activity;
+    private final FusedLocationProviderClient fusedLocationClient;
+    private LocationCallback locationCallback;
+    private GPSListener listener;
+
+    public GPSHelper(Activity activity) {
+        this.activity = activity;
+        this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
+    }
+
+    public void start(GPSListener listener) {
+        this.listener = listener;
+
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-
-            // 如果曾經拒絕過但沒勾選「不再詢問」，可以再次顯示權限提示
-            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                // 可以在這裡顯示自訂 Dialog 解釋為什麼需要權限
-                ActivityCompat.requestPermissions(activity,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        LOCATION_PERMISSION_REQUEST_CODE);
-            } else {
-                // 使用者勾選了「不再詢問」
-                // 引導用戶到設定頁手動開啟權限
-                Toast.makeText(activity, "請至設定中開啟位置權限", Toast.LENGTH_LONG).show();
-
-                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                Uri uri = Uri.fromParts("package", activity.getPackageName(), null);
-                intent.setData(uri);
-                activity.startActivity(intent);
-            }
-
-            return false;
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{ Manifest.permission.ACCESS_FINE_LOCATION },
+                    REQUEST_LOCATION_PERMISSION);
+            return;
         }
 
-        // 已經有權限了
-        return true;
+        startLocationUpdates();
     }
-    public static void initialize(Context context) {
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-            return;
 
-        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+    public void stop() {
+        if (fusedLocationClient != null && locationCallback != null) {
+            fusedLocationClient.removeLocationUpdates(locationCallback);
+        }
+    }
 
-        locationListener = new LocationListener() {
+    private void startLocationUpdates() {
+        LocationRequest locationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(2000)
+                .setFastestInterval(1000);
+
+        locationCallback = new LocationCallback() {
             @Override
-            public void onLocationChanged(Location location) {
-                latitude = location.getLatitude();
-                longitude = location.getLongitude();
+            public void onLocationResult(@NonNull LocationResult locationResult) {
+                if (locationResult == null) return;
+                for (Location location : locationResult.getLocations()) {
+                    if (listener != null) {
+                        listener.onLocationUpdate(
+                                location.getLatitude(),
+                                location.getLongitude()
+                        );
+                    }
+                }
             }
-
-            @Override public void onStatusChanged(String provider, int status, Bundle extras) {}
-            @Override public void onProviderEnabled(String provider) {}
-            @Override public void onProviderDisabled(String provider) {}
         };
 
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, locationListener);
+        fusedLocationClient.requestLocationUpdates(
+                locationRequest,
+                locationCallback,
+                activity.getMainLooper()
+        );
     }
 
-    public static double getLatitude() {
-        return latitude;
+    // 可選：在 Activity 的 onRequestPermissionsResult 中呼叫這個來繼續啟用 GPS
+    public void handlePermissionResult(int requestCode, int[] grantResults) {
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startLocationUpdates();
+            }
+        }
     }
 
-    public static double getLongitude() {
-        return longitude;
+    // 計算與指定點之間的距離（公尺）
+    public static float calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+        float[] result = new float[1];
+        Location.distanceBetween(lat1, lon1, lat2, lon2, result);
+        return result[0]; // 距離（公尺）
     }
 }
