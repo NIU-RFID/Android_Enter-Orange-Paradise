@@ -29,5 +29,7 @@ public class Game4 extends AppCompatActivity {
     }
 
     public void onClickStartGame(View view) {
+        Intent intent = new Intent(this, PuzzleGameActivity.class);
+        startActivity(intent);
     }
 }

@@ -23,7 +23,13 @@
         android:theme="@style/Theme.Niubig"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity2"
+            android:name=".PuzzleGameActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MemoryGameActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CollectGameActivity"
             android:exported="false" />
         <activity
             android:name=".QuizGameActivity"
@@ -45,9 +51,6 @@
             android:exported="false" />
         <activity
             android:name=".Game1"
-            android:exported="false" />
-        <activity
-            android:name=".Map"
             android:exported="false" />
         <activity
             android:name=".Info"

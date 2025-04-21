@@ -1,6 +1,8 @@
 package com.example.niubig;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 
@@ -35,10 +37,29 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, Info.class);
         startActivity(intent);
     }
+    @SuppressLint("QueryPermissionsNeeded")
     public void startMap(View view) {
-        Intent intent = new Intent(this, Map.class);
-        startActivity(intent);
-    }
+        double latitude = 24.633295697260273;
+        double longitude = 121.71218206489003;
+        String label = "大進社區發展協會";
+        String query = latitude + "," + longitude + "(" + label + ")";
+        String uriString = "geo:0,0?q=" + Uri.encode(query);
+        Uri uri = Uri.parse(uriString);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        intent.setPackage("com.google.android.apps.maps");
 
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        } else {
+            Uri playStoreUri = Uri.parse("market://details?id=com.google.android.apps.maps");
+            Intent playStoreIntent = new Intent(Intent.ACTION_VIEW, playStoreUri);
+            if (playStoreIntent.resolveActivity(getPackageManager()) != null) {
+                startActivity(playStoreIntent);
+            } else {
+                Uri webUri = Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.apps.maps");
+                startActivity(new Intent(Intent.ACTION_VIEW, webUri));
+            }
+        }
+    }
 
 }
