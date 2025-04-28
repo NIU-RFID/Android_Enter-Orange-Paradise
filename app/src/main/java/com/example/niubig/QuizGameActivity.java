@@ -2,10 +2,12 @@ package com.example.niubig;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,12 +17,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
+import com.google.android.material.button.MaterialButton;
 import java.util.ArrayList;
 import java.util.Arrays;
 public class QuizGameActivity extends AppCompatActivity {
     ArrayList<QuizGameData> QA_list;
-    LinearLayout information_LinearLayout, quiz_LinearLayout;
+    LinearLayout quiz_LinearLayout;
+    ImageView textView_information;
+    Button btn_startGame;
     TextView problem_textView;
 
     int currentIndex = 0; // 當前題號
@@ -44,13 +48,16 @@ public class QuizGameActivity extends AppCompatActivity {
 
     private void init_data() {
         QA_list = new ArrayList<>();
-        QA_list.add(new QuizGameData("1. 石板屋適用甚麼石頭做的?",
+        QA_list.add(new QuizGameData("1. 石板屋是用什麼石頭做的?",
                 new ArrayList<>(Arrays.asList("黑石板", "白石板", "綠石板", "紅石磚")), 0));
         QA_list.add(new QuizGameData("2. 石板屋居住時不會出現甚麼問題?",
                 new ArrayList<>(Arrays.asList("衛生條件不佳", "房屋漏水", "光線不足", "通風差")), 3));
 
-        information_LinearLayout = findViewById(R.id.information);
-        information_LinearLayout.setVisibility(View.VISIBLE);
+
+        textView_information = findViewById(R.id.information_textView);
+        btn_startGame = findViewById(R.id.startGame);
+        textView_information.setVisibility(View.VISIBLE);
+        btn_startGame.setVisibility(View.VISIBLE);
 
         quiz_LinearLayout = findViewById(R.id.quiz_layout);
         quiz_LinearLayout.setVisibility(View.GONE);
@@ -61,12 +68,14 @@ public class QuizGameActivity extends AppCompatActivity {
     }
 
     private void hideInformationLayout() {
-        information_LinearLayout.setVisibility(View.GONE);
+        textView_information.setVisibility(View.GONE);
+        btn_startGame.setVisibility(View.GONE);
         quiz_LinearLayout.setVisibility(View.VISIBLE);
     }
 
     private void openInformationLayout() {
-        information_LinearLayout.setVisibility(View.VISIBLE);
+        textView_information.setVisibility(View.VISIBLE);
+        btn_startGame.setVisibility(View.VISIBLE);
         quiz_LinearLayout.setVisibility(View.GONE);
     }
 
@@ -94,14 +103,16 @@ public class QuizGameActivity extends AppCompatActivity {
         QuizGameData qa = QA_list.get(index);
         TextView problem = new TextView(this);
         problem.setText(qa.getQuestion());
-        // 設定文字風格與顏色，若有 R 顯示成錯誤，請忽視這個錯誤
         problem.setTextAppearance(this, androidx.appcompat.R.style.TextAppearance_AppCompat_Large);
         problem.setTextColor(Color.parseColor("#000000"));
         quiz_LinearLayout.addView(problem);
+
         if (qa.getOptions().size() > 1) {
             for (int i = 0; i < qa.getOptions().size(); i++) {
-                Button btn = new Button(this);
+                MaterialButton btn = new MaterialButton(this); // 換成 MaterialButton
                 btn.setText(qa.getOptions().get(i));
+                btn.setTextSize(20); // 設定字體大小，單位是 sp
+                btn.setStrokeColor(ColorStateList.valueOf(Color.BLACK)); // 邊框顏色
                 int finalI = i;
                 btn.setOnClickListener(v -> {
                     if (finalI == qa.getAnswer_index()) {

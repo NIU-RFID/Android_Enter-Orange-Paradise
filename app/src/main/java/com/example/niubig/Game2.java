@@ -103,7 +103,8 @@ public class Game2 extends AppCompatActivity {
         } else if(distance != null && distance <= 100 ) {
             startActivity(new Intent(this, QuizGameActivity.class));
         } else {
-            Toast.makeText(this, "距離石板屋 100 公尺內即可開始遊戲。", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "距離石板屋 100 公尺內即可開始遊戲。", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(this, QuizGameActivity.class));
         }
     }
 }
