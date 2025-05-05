@@ -46,8 +46,8 @@ public class Game2 extends AppCompatActivity {
 
     @SuppressLint("QueryPermissionsNeeded")
     public void onClickCheckMap(View view) {
-        double latitude = 24.634103634953988;
-        double longitude = 121.7168691171622;
+        double latitude = 24.746749444374817;
+        double longitude = 121.7469747022715;
         String label = "石板屋";
         String query = latitude + "," + longitude + "(" + label + ")";
         String uriString = "geo:0,0?q=" + Uri.encode(query);

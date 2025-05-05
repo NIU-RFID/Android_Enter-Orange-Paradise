@@ -34,6 +34,10 @@ public class MainActivity extends AppCompatActivity {
         game3_isDone = sharedPreferences.getBoolean("game3", false);
         game4_isDone = sharedPreferences.getBoolean("game4", false);
         game5_isDone = sharedPreferences.getBoolean("game5", false);
+
+        // 啟動背景音樂
+        Intent intent = new Intent(this, MusicService.class);
+        startService(intent);
     }
     public void startGame(View view) {
         Intent intent = new Intent(this, Game.class);

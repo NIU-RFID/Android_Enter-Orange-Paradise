@@ -2,6 +2,7 @@ package com.example.niubig;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.GridLayout;
@@ -25,12 +26,23 @@ public class MemoryGameActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
 
+    // Declare MediaPlayer for sound effects
+    private MediaPlayer winSound;
+    private MediaPlayer lossSound;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memory_game);
+
+        // Initialize SharedPreferences
         sharedPreferences = getSharedPreferences("isDone", MODE_PRIVATE);
         editor = sharedPreferences.edit();
+
+        // Initialize the sound players
+        winSound = MediaPlayer.create(this, R.raw.win);
+        lossSound = MediaPlayer.create(this, R.raw.loss);
+
         GridLayout grid = findViewById(R.id.memory_grid);
         initializeCards();
 
@@ -62,7 +74,6 @@ public class MemoryGameActivity extends AppCompatActivity {
             grid.addView(iv);
             imageViews.add(iv);
         }
-
     }
 
     private void initializeCards() {
@@ -97,6 +108,7 @@ public class MemoryGameActivity extends AppCompatActivity {
                         secondFlipped.isText() != firstFlipped.isText()) {
                     secondFlipped.setMatched(true);
                     firstFlipped.setMatched(true);
+                    playWinSound();  // Play the win sound when a match is found
 
                     // 👇 檢查是否全部卡牌都 matched
                     if (isGameCompleted()) {
@@ -110,6 +122,7 @@ public class MemoryGameActivity extends AppCompatActivity {
                     secondFlipped.setFaceUp(false);
                     firstFlipped.setFaceUp(false);
                     updateCardImages();
+                    playLossSound();  // Play the loss sound when cards do not match
                 }
                 firstFlipped = null;
                 isBusy = false;
@@ -126,6 +139,7 @@ public class MemoryGameActivity extends AppCompatActivity {
             }
         }
     }
+
     private boolean isGameCompleted() {
         for (MemoryGameData card : cards) {
             if (!card.isMatched()) {
@@ -135,4 +149,27 @@ public class MemoryGameActivity extends AppCompatActivity {
         return true;
     }
 
+    private void playWinSound() {
+        if (winSound != null) {
+            winSound.start();
+        }
+    }
+
+    private void playLossSound() {
+        if (lossSound != null) {
+            lossSound.start();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Release the MediaPlayer resources when the activity is destroyed
+        if (winSound != null) {
+            winSound.release();
+        }
+        if (lossSound != null) {
+            lossSound.release();
+        }
+    }
 }
